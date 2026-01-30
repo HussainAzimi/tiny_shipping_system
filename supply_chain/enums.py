@@ -3,7 +3,7 @@ from __future__ import annotations
 from enum import Enum, auto
 
 class ShipmentState(Enum):
-    CREATED = auto()
+    CREATED = auto()  
     PACKED = auto()
     IN_TRANSIT = auto()
     DELIVERED = auto()
@@ -16,9 +16,9 @@ class ShipmentState(Enum):
 # - From DELIVERED -> (no further moves)
 # - From CANCELLED -> (no further moves)
 ALLOWED_TRANSITIONS: dict[ShipmentState, set[ShipmentState]] = {
-    # ShipmentState.CREATED: {ShipmentState.PACKED, ShipmentState.CANCELLED},
-    # ShipmentState.PACKED: {ShipmentState.IN_TRANSIT, ShipmentState.CANCELLED},
-    # ShipmentState.IN_TRANSIT: {ShipmentState.DELIVERED, ShipmentState.CANCELLED},
-    # ShipmentState.DELIVERED: set(),
-    # ShipmentState.CANCELLED: set(),
+    ShipmentState.CREATED: {ShipmentState.PACKED, ShipmentState.CANCELLED},
+    ShipmentState.PACKED: {ShipmentState.IN_TRANSIT, ShipmentState.CANCELLED},
+    ShipmentState.IN_TRANSIT: {ShipmentState.DELIVERED, ShipmentState.CANCELLED},
+    ShipmentState.DELIVERED: set(),
+    ShipmentState.CANCELLED: set(),
 }
