@@ -138,23 +138,27 @@ class Shipment:
             StateError: when the transition is illegal.
         """
         # TODO: implement table check + idempotent no-op + record event
+        from_state = self._state
+        if from_state == to:
+            return 
+        
         allowed_transitions = ALLOWED_TRANSITIONS.get(self._state, set())
         if to not in allowed_transitions:
             raise StateError(
                 f"Invalid transition: Cannot move from {self._state.name} to {to.name}"
             )
-        old_state = self._state
+        
         self._state = to
 
         self.events.append(
             ShipmentEvent.state_change(
                 shipment_id=self.ID,
-                from_state=old_state,
-                to_state=to
+                from_state= from_state.name,
+                to_state=to.name
             )
         )
 
-        print(f"Shipment {self.ID} now is in {to}")
+        print(f"Shipment {self.ID} is now in {to.name} state.")
 
     def __repr__(self) -> str:
         # TODO: include shipment_id, state name, and total_units for quick debugging
