@@ -165,7 +165,3 @@ class Shipment:
             f"total_units={self.items}"
             f")"
         )
-
-
-shipment = Shipment("ABC-123", {"APPLE": 5})
-print(shipment)
