@@ -46,23 +46,20 @@ class Shipment:
         """Increase quantity for a SKU (qty must be > 0). Records an event."""
         # TODO: enforce invariants and record ShipmentEvent.add
         if self._state != ShipmentState.CREATED:
-            raise ValueError(f"Can not add items to a shipment in {self._state} state.")
-        if qty <= 0:
-            raise ValueError("Quantity to add must be greater than zero.")
-        if sku in self._items:
-            self._items[sku] += qty
-        else:
-            self._items[sku] = qty
-
+            raise ValueError(f"Can not add items to a shipment in {self._state.name} state.")
+        
+        current_qty = self._items.get(sku, 0)
+        self._items[sku] = current_qty + qty
+        
         self.events.append(
-            ShipmentEvent.add(
-                shipment_id= self.ID,
-                sku = sku,
-                qty = qty
-            )
+        ShipmentEvent.add(
+            shipment_id= self.ID,
+            sku = sku,
+            qty = qty
         )
+    )
 
-        print(f"Added {qty} of {sku}. Total units now: {self.total_units}")
+        print(f"Added {qty} of {sku} with id {self.ID}. Total units now: {self.total_units}")
         
 
     def remove_item(self, sku: str, qty: int) -> None:
@@ -71,16 +68,17 @@ class Shipment:
         if self._state != ShipmentState.CREATED:
             raise ValueError(f"Can not remove items to a shipment in {self._state} state.")
         
-        if qty > self._items[sku]:
-
+        current_qty = self._items.get(sku, 0)
+        if current_qty < qty:
             raise InsufficientQuantityError(
-                f"Can not remove {qty} units of {sku}. only {self._items[sku]} available."
+                f"Can not remove {qty} units of {sku}. only {current_qty} available."
             )
-
-        self._items[sku] -= qty
-        
-        if self._items[sku] == 0:
+    
+        if current_qty == qty:
             del self._items[sku]
+
+        else:
+            self._items[sku] -= qty
 
         self.events.append(
             ShipmentEvent.remove(
@@ -90,7 +88,7 @@ class Shipment:
             )
         )
 
-        print(f"Remove {qty} of {sku}. Total units now: {self.total_units}")
+        print(f"Remove {qty} of {sku} from shipment {self.ID}. Total units now: {self.total_units}")
 
     # ---- State management ----
     def pack(self) -> None:
