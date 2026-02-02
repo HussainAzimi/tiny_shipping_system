@@ -48,7 +48,7 @@ class Warehouse:
         """Return counts of shipments by state."""
         counts: dict[ShipmentState, int] = {}
         for shipment in self._shipments.values():
-            state = shipment.state
+            state = shipment._state
             counts[state] = counts.get(state, 0) + 1
         return counts
 
@@ -68,8 +68,8 @@ class Warehouse:
             {'shipment_id': 'S1', 'state': 'IN_TRANSIT', 'total_units': 42}
         """
         return [{
-            'shipment_id':shipment.id,
-            'state': shipment.state.name,
+            'shipment_id':shipment.ID,
+            'state': shipment._state.name,
             'total_units': shipment.total_units
 
           }
