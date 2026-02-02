@@ -50,7 +50,6 @@ class ShipmentEvent:
 
         )
     
-
     @classmethod
     def remove(cls, shipment_id: str, *, sku: str, qty: int) -> "ShipmentEvent":
         """Create a remove-item event (qty must be > 0)."""
@@ -75,7 +74,7 @@ class ShipmentEvent:
             shipment_id=shipment_id,
             kind="state_change",
             sku=None,
-            qty=None
+            qty=None,
             at=datetime.now(timezone.utc),
             from_state=from_state,
             to_state=to_state
