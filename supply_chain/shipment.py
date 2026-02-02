@@ -46,7 +46,7 @@ class Shipment:
         """Increase quantity for a SKU (qty must be > 0). Records an event."""
         # TODO: enforce invariants and record ShipmentEvent.add
         if self._state != ShipmentState.CREATED:
-            raise ValueError(f"Can not add items to a shipment in {self._state.name} state.")
+            raise ValueError(f"Cannot add items to a shipment in {self._state.name} state.")
         
         current_qty = self._items.get(sku, 0)
         self._items[sku] = current_qty + qty
@@ -66,12 +66,15 @@ class Shipment:
         """Decrease quantity for a SKU (qty must be > 0). Records an event, or raises InsufficientQuantityError."""
         # TODO: enforce invariants and record ShipmentEvent.remove
         if self._state != ShipmentState.CREATED:
-            raise ValueError(f"Can not remove items to a shipment in {self._state} state.")
+            raise ValueError(f"Cannot remove items to a shipment in {self._state.name} state.")
         
         current_qty = self._items.get(sku, 0)
         if current_qty < qty:
             raise InsufficientQuantityError(
-                f"Can not remove {qty} units of {sku}. only {current_qty} available."
+                sku=sku,
+                requested=qty,
+                available=current_qty,
+                shipment_id=self.ID
             )
     
         if current_qty == qty:
@@ -143,7 +146,9 @@ class Shipment:
         allowed_transitions = ALLOWED_TRANSITIONS.get(self._state, set())
         if to not in allowed_transitions:
             raise StateError(
-                f"Invalid transition: Cannot move from {self._state.name} to {to.name}"
+                from_state=from_state,
+                to_state=to.name,
+                shipment_id=self.ID          
             )
         
         self._state = to
