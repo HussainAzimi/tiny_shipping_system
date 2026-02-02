@@ -23,7 +23,7 @@ def test_count_by_state_and_totals():
     s1 = Shipment("S1", {"A": 10, "B": 5})
     s2 = Shipment("S2", {"A": 5})
 
-    s1.pack
+    s1.pack()
     wh.add(s1)
     wh.add(s2)
     counts = wh.count_by_state()
@@ -46,5 +46,5 @@ def test_to_rows_shape():
 
     row = rows[0]
     assert row["shipment_id"] == "S1"
-    assert isinstance(row["state", str])
+    assert isinstance(row["state"], str)
     assert row["total_units"] == 10
