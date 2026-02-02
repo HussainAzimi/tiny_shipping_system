@@ -38,7 +38,13 @@ class Shipment:
 
     @property
     def total_units(self) -> int:
-        """Computed total quantity across all SKUs."""
+        """Computed total quantity across all SKUs.
+        Example:
+        shipment = Shipment("PEN-001, {"P100: 100"})
+        shipment.add_item("P120", 50)
+        shipment.total_units
+        out = 150
+        """
         # TODO: compute sum of quantities
         return sum(self._items.values())
 
@@ -169,6 +175,6 @@ class Shipment:
             f"Shipment("
             f"id={self.ID!r}, "
             f"state={self._state.name}, "
-            f"total_units={self.items}"
+            f"total_units={self.total_units}"
             f")"
         )
