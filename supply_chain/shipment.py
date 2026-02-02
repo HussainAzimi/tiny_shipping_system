@@ -52,7 +52,11 @@ class Shipment:
         """Increase quantity for a SKU (qty must be > 0). Records an event."""
         # TODO: enforce invariants and record ShipmentEvent.add
         if self._state != ShipmentState.CREATED:
-            raise ValueError(f"Cannot add items to a shipment in {self._state.name} state.")
+            raise StateError(
+                from_state=self._state,
+                to_state="MODIFIED",
+                shipment_id=self.ID
+            )
         
         current_qty = self._items.get(sku, 0)
         self._items[sku] = current_qty + qty
@@ -71,8 +75,12 @@ class Shipment:
     def remove_item(self, sku: str, qty: int) -> None:
         """Decrease quantity for a SKU (qty must be > 0). Records an event, or raises InsufficientQuantityError."""
         # TODO: enforce invariants and record ShipmentEvent.remove
-        if self._state != ShipmentState.CREATED:
-            raise ValueError(f"Cannot remove items to a shipment in {self._state.name} state.")
+        if self._state in {ShipmentState.DELIVERED, ShipmentState.CANCELLED}:
+            raise StateError(
+                from_state=self._state,
+                to_state="MODIFIED",
+                shipment_id=self.ID
+            )
         
         current_qty = self._items.get(sku, 0)
         if current_qty < qty:
